@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,7 +20,8 @@ export default function App() {
 	const [ simpleSelect, setSimpleSelect ] = React.useState('');
 	const [ multipleSelect, setMultipleSelect ] = React.useState([]);
 	const [ repos, setRepos ] = React.useState([]);
-	const [ reposI, setReposI ] = React.useState([]);
+  const [ reposI, setReposI ] = React.useState([]);
+  const [ reposII, setReposII ] = React.useState([]);
 
 	const handleSimple = (event) => {
 		setSimpleSelect(event.target.value);
@@ -50,30 +51,38 @@ export default function App() {
   };
   
   let webDataII = async (valor) => {
-		console.log(valor.target.value, "el ultimo");
 		const respII = await fetch(
 			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor.target.value}`
 		);
 		const datoII = await respII.json();
-		console.log(datoII);
-		// setReposI(datoII);
+    setReposII(datoII);
 	};
 
 
-  let comp;
   let varr;
 
-	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1])) ];
-	const categoriesI = [ ...new Set(reposI.map((re) => re.name)) ];
+	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1]))];
+  const categoriesI = [ ...new Set(reposI.map((re) => re.name)) ];
+  const categoriesII = [ ...new Set(reposII.map((re) => re.name.split('.')[1]))];
 
-
-
-  if (categories[0] === 'us' || categories[0] =='es') { varr = categories }
+  if (categories[0] === 'us' || categories[0] =='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
 
+  const useCompare = (val) => {
+    const prevVal = usePrevious(val)
+    return prevVal !== val
+  }
+  const usePrevious = (value) => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
 
+  const hasValChanged = useCompare(reposI)
 
-		
+  console.log(hasValChanged, "valor que cambia")
 
 
 	return (
@@ -127,8 +136,6 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem>
-
-
                     { varr.length !== 0 ? 
 										<GridItem xs={12} sm={6} md={5} lg={5}>
 											<FormControl fullWidth className={classes.selectFormControl}>
@@ -158,6 +165,48 @@ export default function App() {
 														{(categories[0] === undefined)? 'Selecciones un archivo': 'Selecciones una localidad'}
 													</MenuItem>
 													{varr.map((localidad, key) => {
+														return (
+															<MenuItem
+																classes={{
+																	root: classes.selectMenuItem,
+																	selected: classes.selectMenuItemSelectedMultiple
+																}}
+                                index={key}
+																value={localidad}
+															>
+																{localidad}
+															</MenuItem>
+														);
+													})}
+												</Select>
+											</FormControl>
+										</GridItem> : null}
+                    { (categoriesII[0] !== undefined) ? 
+										<GridItem xs={12} sm={6} md={5} lg={5}>
+											<FormControl fullWidth className={classes.selectFormControl}>
+												<InputLabel htmlFor="multiple-select" className={classes.selectLabel}>
+                         Selecciones una localidad
+												</InputLabel>
+												<Select
+													value={multipleSelect}
+													onChange={handleMultiple}
+													MenuProps={{ className: classes.selectMenu }}
+													classes={{ select: classes.select }}
+													inputProps={{
+														name: 'multipleSelect',
+														id: 'multiple-select'
+                          }}
+                        
+												>
+													<MenuItem
+														disabled
+														classes={{
+															root: classes.selectMenuItem
+														}}
+													>
+													Selecciones una localidad
+													</MenuItem>
+													{categoriesII.map((localidad, key) => {
 														return (
 															<MenuItem
 																classes={{
