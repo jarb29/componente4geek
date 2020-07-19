@@ -17,21 +17,43 @@ import styles from './assets/jss/material-dashboard-pro-react/views/extendedForm
 const useStyles = makeStyles(styles);
 
 export default function App() {
-	const [ simpleSelect, setSimpleSelect ] = React.useState('');
+  const [ simpleSelect, setSimpleSelect ] = React.useState('');
+  const [ simpleSelectI, setSimpleSelectI ] = React.useState('');
+  const [ simpleSelectII, setSimpleSelectII ] = React.useState('');
+  const [ simpleSelectIII, setSimpleSelectIII ] = React.useState('');
 	const [ multipleSelect, setMultipleSelect ] = React.useState([]);
 	const [ repos, setRepos ] = React.useState([]);
   const [ reposI, setReposI ] = React.useState([]);
   const [ reposII, setReposII ] = React.useState([]);
+  const [ reposIII, setReposIII ] = React.useState([]);
+  const [filtered_repo, setFilteredRepo] = React.useState([{name:"alex"}]);
+  const [filtered_repoI, setFilteredRepoI] = React.useState([]);
 
 	const handleSimple = (event) => {
 		setSimpleSelect(event.target.value);
+  };
+  const handleSimpleI = (event) => {
+		setSimpleSelectI(event.target.value);
+  };
+  const handleSimpleII = (event) => {
+		setSimpleSelectII(event.target.value);
+  };
+  const handleSimpleIII = (event) => {
+		setSimpleSelectIII(event.target.value);
 	};
 	const handleMultiple = (event) => {
 		setMultipleSelect(event.target.value);
 	};
 
   const classes = useStyles();
+
+  // Variables 
   let categoriesII;
+  let varr;
+  let filtered_repos;
+  let filtered_reposI;
+
+  // Variable
   
 	useEffect(() => {
 		webData();
@@ -40,63 +62,68 @@ export default function App() {
 	let webData = async (e) => {
 		const resp = await fetch('https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data');
 		const dato = await resp.json();
-		setRepos(dato);
+    setRepos(dato);
 	};
 
 	let webDataI = async (valor) => {
-		const respI = await fetch(
-			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/${valor.target.value}`
-		);
+    const urlBaseI = `https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/${valor.target.value}`;
+    const respI = await fetch(urlBaseI);
 		const datoI = await respI.json();
     setReposI(datoI);
-    console.log(datoI, "datos I")
+    setFilteredRepo([{name:"alex"}]);
+  
+
   };
   
   let webDataII = async (valor) => {
-		const respII = await fetch(
-			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor.target.value}`
-		);
+    const urlBaseII = 		`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor.target.value}`
+		const respII = await fetch(urlBaseII);
     const datoII = await respII.json();
+    
 
-    if (datoII.message) { setReposII([{name:'alex.us.prueba'}]) }
+
+    if (datoII.message) { 
+      setReposII([{name:'alex.us.prueba'}]);
+
+  }
     else if (datoII.filter(e => e.name.split('.')[1] === 'us').length > 0) 
     {
       categoriesII = [ ...new Set(datoII.map((re) => re.name.split('.')[1]))]
       setReposII(categoriesII) 
+      setReposIII(datoII)
     }
     else {
           setReposII([{name:'alex.us.prueba'}]) 
     };
   };
   
-  let varr;
-
-  console.log(reposI, "para ver que es reposI")
-
-
-
 	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1]))];
-  const categoriesI = [ ...new Set(reposI.map((re) => re.name)) ];
+  const categoriesI = [ ...new Set(reposI.map((re) => re.name))];
 
- 
 
-  if (categories[0] === 'us' || categories[0] =='es') { varr = categories}
+
+  if (categories[0] === 'us' || categories[0] ==='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
 
-  const useCompare = (val) => {
-    const prevVal = usePrevious(val)
-    return prevVal !== val
-  }
-  const usePrevious = (value) => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
 
+  const reposI_filter = (e) =>{
+    let selected_region = e.target.value;
+    console.log(selected_region.length , "longitud")
+    if (selected_region.length <= 2) {
+    filtered_repos = reposI.filter(e => e.name.split('.')[1] === selected_region);
+    setFilteredRepo(filtered_repos)}
+  };
 
-  const hasValChanged = useCompare(reposI)
+  const reposII_filter = (e) =>{
+    let selected_region = e.target.value; 
+    console.log(selected_region.length , "longitud II")
+
+    filtered_reposI = reposIII.filter(e => e.name.split('.')[1] === selected_region);
+    setFilteredRepoI(filtered_reposI)
+  };
+
+  console.log(filtered_repo, "valor de filtered repo")
+
 
 
 
@@ -175,7 +202,8 @@ export default function App() {
                           }}
                           
                           onClick={(e) => {
-														webDataII(e);
+                            webDataII(e) 
+                            reposI_filter(e);
 													}}
 												>
 													<MenuItem
@@ -216,27 +244,26 @@ export default function App() {
                          Selecciones una localidad
 												</InputLabel>
 												<Select
-													value={multipleSelect}
-													onChange={handleMultiple}
+													value={simpleSelectI}
+													onChange={handleSimpleI}
 													MenuProps={{ className: classes.selectMenu }}
 													classes={{ select: classes.select }}
 													inputProps={{
 														name: 'multipleSelect',
 														id: 'multiple-select'
                           }}
-                        
+                          onClick = {e =>{reposII_filter(e)}}
 												>
 													<MenuItem
 														disabled
 														classes={{
 															root: classes.selectMenuItem
-														}}
+                            }}
+                            
 													>
 													Selecciones una localidad
 													</MenuItem>
 													{reposII.map((localidad, key) => {
-                            console.log(localidad, "par ver que es dentro del map")
-
 														return (
 															<MenuItem
 																classes={{
@@ -253,6 +280,60 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem>: null}
+
+                  {/* Repositorios filtrados */}
+                    { filtered_repo[0].name === 'alex' ? null :
+                  <GridItem xs={12} sm={6} md={5} lg={5}>
+                    
+                    <FormControl fullWidth className={classes.selectFormControl}>
+                      <InputLabel htmlFor="multiple-select" className={classes.selectLabel}>
+                       Selecciones un Repositorio
+                      </InputLabel>
+                      <Select
+                        value={simpleSelectII}
+                        onChange={handleSimpleII}
+                        MenuProps={{ className: classes.selectMenu }}
+                        classes={{ select: classes.select }}
+                        inputProps={{
+                          name: 'multipleSelect',
+                          id: 'multiple-select'
+                        }}
+                        // onClick = {e =>{reposII_filter(e)}}
+                      >
+                        <MenuItem
+                          disabled
+                          classes={{
+                            root: classes.selectMenuItem
+                          }}
+                          
+                        >
+                            Selecciones un Repositorio
+                        </MenuItem>
+                        {filtered_repo.map((repo, key) => {
+                          return (
+                            <MenuItem
+                              classes={{
+                                root: classes.selectMenuItem,
+                                selected: classes.selectMenuItemSelectedMultiple
+                              }}
+                              index={key}
+                              value={repo.path}
+                            >
+                              {repo.path}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </GridItem>}
+
+
+
+
+
+
+
+
 
 
 
