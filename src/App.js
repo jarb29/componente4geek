@@ -66,7 +66,6 @@ export default function App() {
     const dato = await resp.json();
     
     const dato_filtrado = dato.filter(e => e.name.split('.')[1] !== 'yml');
-    console.log(dato_filtrado, "lo que llega");
     setRepos(dato_filtrado);
 	};
 
@@ -77,15 +76,10 @@ export default function App() {
     setReposI(datoI);
     const categories = [ ...new Set(datoI.map((re) => re.name.split('.')[1]))];
     const categoriesI = [ ...new Set(datoI.map((re) => re.name))];
-
-    console.log(categories);
-    console.log(categoriesI);
     setCategories(categories);
     setCategoriesI(categoriesI);
     setFilteredRepo([{name:"alex"}]);
     setFilteredRepoI([{name:"alex"}]);
-  
-
   };
   
   let webDataII = async (valor) => {
@@ -110,7 +104,7 @@ export default function App() {
     };
   };
 
-  varr = categories;
+  varr = [];
   if (categories[0] === 'us' || categories[0] ==='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
 
@@ -128,7 +122,6 @@ export default function App() {
     setFilteredRepoI(filtered_reposI)
   };
 
-  console.log(categoriesI.length, "para ver que es")
 
 	return (
 		<div>
