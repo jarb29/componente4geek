@@ -27,7 +27,9 @@ export default function App() {
   const [ reposII, setReposII ] = React.useState([]);
   const [ reposIII, setReposIII ] = React.useState([]);
   const [filtered_repo, setFilteredRepo] = React.useState([{name:"alex"}]);
-  const [filtered_repoI, setFilteredRepoI] = React.useState([]);
+  const [filtered_repoI, setFilteredRepoI] = React.useState([{name:"alex"}]);
+  const [categories, setCategories] = React.useState(["alex"]);
+  const [categoriesI, setCategoriesI] = React.useState(["alex"]);
 
 	const handleSimple = (event) => {
 		setSimpleSelect(event.target.value);
@@ -61,8 +63,11 @@ export default function App() {
 
 	let webData = async (e) => {
 		const resp = await fetch('https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data');
-		const dato = await resp.json();
-    setRepos(dato);
+    const dato = await resp.json();
+    
+    const dato_filtrado = dato.filter(e => e.name.split('.')[1] !== 'yml');
+    console.log(dato_filtrado, "lo que llega");
+    setRepos(dato_filtrado);
 	};
 
 	let webDataI = async (valor) => {
@@ -70,7 +75,15 @@ export default function App() {
     const respI = await fetch(urlBaseI);
 		const datoI = await respI.json();
     setReposI(datoI);
+    const categories = [ ...new Set(datoI.map((re) => re.name.split('.')[1]))];
+    const categoriesI = [ ...new Set(datoI.map((re) => re.name))];
+
+    console.log(categories);
+    console.log(categoriesI);
+    setCategories(categories);
+    setCategoriesI(categoriesI);
     setFilteredRepo([{name:"alex"}]);
+    setFilteredRepoI([{name:"alex"}]);
   
 
   };
@@ -96,19 +109,14 @@ export default function App() {
           setReposII([{name:'alex.us.prueba'}]) 
     };
   };
-  
-	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1]))];
-  const categoriesI = [ ...new Set(reposI.map((re) => re.name))];
 
-
-
+  varr = categories;
   if (categories[0] === 'us' || categories[0] ==='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
 
 
   const reposI_filter = (e) =>{
     let selected_region = e.target.value;
-    console.log(selected_region.length , "longitud")
     if (selected_region.length <= 2) {
     filtered_repos = reposI.filter(e => e.name.split('.')[1] === selected_region);
     setFilteredRepo(filtered_repos)}
@@ -116,16 +124,11 @@ export default function App() {
 
   const reposII_filter = (e) =>{
     let selected_region = e.target.value; 
-    console.log(selected_region.length , "longitud II")
-
     filtered_reposI = reposIII.filter(e => e.name.split('.')[1] === selected_region);
     setFilteredRepoI(filtered_reposI)
   };
 
-  console.log(filtered_repo, "valor de filtered repo")
-
-
-
+  console.log(categoriesI.length, "para ver que es")
 
 	return (
 		<div>
@@ -234,7 +237,6 @@ export default function App() {
 
                     {/* Function webDataII */}
 
-
                     { (reposI.filter(e => e.type === 'dir').length > 0) ?
                   
 										<GridItem xs={12} sm={6} md={5} lg={5}>
@@ -328,15 +330,51 @@ export default function App() {
                   </GridItem>}
 
 
-
-
-
-
-
-
-
-
-
+                    {/* Repositorios filtrados */}
+                    { filtered_repoI[0].name === 'alex' ? null :
+                  <GridItem xs={12} sm={6} md={5} lg={5}>
+                    
+                    <FormControl fullWidth className={classes.selectFormControl}>
+                      <InputLabel htmlFor="multiple-select" className={classes.selectLabel}>
+                       Selecciones un Repositorio
+                      </InputLabel>
+                      <Select
+                        value={simpleSelectIII}
+                        onChange={handleSimpleIII}
+                        MenuProps={{ className: classes.selectMenu }}
+                        classes={{ select: classes.select }}
+                        inputProps={{
+                          name: 'multipleSelect',
+                          id: 'multiple-select'
+                        }}
+                        // onClick = {e =>{reposII_filter(e)}}
+                      >
+                        <MenuItem
+                          disabled
+                          classes={{
+                            root: classes.selectMenuItem
+                          }}
+                          
+                        >
+                            Selecciones un Repositorio
+                        </MenuItem>
+                        {filtered_repoI.map((repo, key) => {
+                          return (
+                            <MenuItem
+                              classes={{
+                                root: classes.selectMenuItem,
+                                selected: classes.selectMenuItemSelectedMultiple
+                              }}
+                              index={key}
+                              value={repo.path}
+                            >
+                              {repo.path}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </GridItem>}
 									</GridContainer>
 								</GridItem>
 							</GridContainer>
