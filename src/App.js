@@ -13,6 +13,7 @@ import GridItem from './Grid/GridItem.js';
 import Card from './Card/Card.js';
 import CardBody from './Card/CardBody.js';
 import styles from './assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
+import Editor from './Editor.js';
 
 const useStyles = makeStyles(styles);
 
@@ -30,6 +31,7 @@ export default function App() {
   const [filtered_repoI, setFilteredRepoI] = React.useState([{name:"alex"}]);
   const [categories, setCategories] = React.useState(["alex"]);
   const [categoriesI, setCategoriesI] = React.useState(["alex"]);
+  const [url, setUrl] = React.useState([]);
 
 	const handleSimple = (event) => {
 		setSimpleSelect(event.target.value);
@@ -108,7 +110,6 @@ export default function App() {
   if (categories[0] === 'us' || categories[0] ==='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
 
-
   const reposI_filter = (e) =>{
     let selected_region = e.target.value;
     if (selected_region.length <= 2) {
@@ -122,6 +123,9 @@ export default function App() {
     setFilteredRepoI(filtered_reposI)
   };
 
+  console.log(url, "la url")
+
+  
 
 	return (
 		<div>
@@ -340,7 +344,7 @@ export default function App() {
                           name: 'multipleSelect',
                           id: 'multiple-select'
                         }}
-                        // onClick = {e =>{reposII_filter(e)}}
+                        onClick = {e =>{setUrl(e.target.value)}}
                       >
                         <MenuItem
                           disabled
@@ -359,7 +363,7 @@ export default function App() {
                                 selected: classes.selectMenuItemSelectedMultiple
                               }}
                               index={key}
-                              value={repo.path}
+                              value={repo}
                             >
                               {repo.path}
                             </MenuItem>
@@ -374,6 +378,7 @@ export default function App() {
 						</CardBody>
 					</Card>
 				</GridItem>
+        <Editor value = {url}/>
 			</GridContainer>
 		</div>
 	);
