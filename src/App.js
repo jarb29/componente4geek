@@ -30,8 +30,9 @@ export default function App() {
 		setMultipleSelect(event.target.value);
 	};
 
-	const classes = useStyles();
-
+  const classes = useStyles();
+  let categoriesII;
+  
 	useEffect(() => {
 		webData();
 	}, []);
@@ -47,23 +48,37 @@ export default function App() {
 			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/${valor.target.value}`
 		);
 		const datoI = await respI.json();
-		setReposI(datoI);
+    setReposI(datoI);
+    console.log(datoI, "datos I")
   };
   
   let webDataII = async (valor) => {
 		const respII = await fetch(
 			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor.target.value}`
 		);
-		const datoII = await respII.json();
-    setReposII(datoII);
-	};
+    const datoII = await respII.json();
 
-
+    if (datoII.message) { setReposII([{name:'alex.us.prueba'}]) }
+    else if (datoII.filter(e => e.name.split('.')[1] === 'us').length > 0) 
+    {
+      categoriesII = [ ...new Set(datoII.map((re) => re.name.split('.')[1]))]
+      setReposII(categoriesII) 
+    }
+    else {
+          setReposII([{name:'alex.us.prueba'}]) 
+    };
+  };
+  
   let varr;
+
+  console.log(reposI, "para ver que es reposI")
+
+
 
 	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1]))];
   const categoriesI = [ ...new Set(reposI.map((re) => re.name)) ];
-  const categoriesII = [ ...new Set(reposII.map((re) => re.name.split('.')[1]))];
+
+ 
 
   if (categories[0] === 'us' || categories[0] =='es') { varr = categories}
   else if (categories[0] === undefined) { varr = categoriesI }
@@ -80,9 +95,9 @@ export default function App() {
     return ref.current;
   }
 
+
   const hasValChanged = useCompare(reposI)
 
-  console.log(hasValChanged, "valor que cambia")
 
 
 	return (
@@ -97,6 +112,9 @@ export default function App() {
 								<GridItem xs={12} sm={12} md={6}>
 									<legend>Seleccione</legend>
 									<GridContainer>
+
+                    {/* Fuction Webdata */}
+
 										<GridItem xs={12} sm={6} md={5} lg={5}>
 											<FormControl fullWidth className={classes.selectFormControl}>
 												<InputLabel htmlFor="simple-select" className={classes.selectLabel}>
@@ -136,6 +154,10 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem>
+                  
+
+                  {/* Function webDataI */}
+
                     { varr.length !== 0 ? 
 										<GridItem xs={12} sm={6} md={5} lg={5}>
 											<FormControl fullWidth className={classes.selectFormControl}>
@@ -181,8 +203,14 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem> : null}
-                    { (categoriesII[0] !== undefined) ? 
+
+                    {/* Function webDataII */}
+
+
+                    { (reposI.filter(e => e.type === 'dir').length > 0) ?
+                  
 										<GridItem xs={12} sm={6} md={5} lg={5}>
+                      
 											<FormControl fullWidth className={classes.selectFormControl}>
 												<InputLabel htmlFor="multiple-select" className={classes.selectLabel}>
                          Selecciones una localidad
@@ -206,7 +234,9 @@ export default function App() {
 													>
 													Selecciones una localidad
 													</MenuItem>
-													{categoriesII.map((localidad, key) => {
+													{reposII.map((localidad, key) => {
+                            console.log(localidad, "par ver que es dentro del map")
+
 														return (
 															<MenuItem
 																classes={{
@@ -222,7 +252,10 @@ export default function App() {
 													})}
 												</Select>
 											</FormControl>
-										</GridItem> : null}
+										</GridItem>: null}
+
+
+
 									</GridContainer>
 								</GridItem>
 							</GridContainer>
