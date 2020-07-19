@@ -38,34 +38,40 @@ export default function App() {
 	let webData = async (e) => {
 		const resp = await fetch('https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data');
 		const dato = await resp.json();
-		console.log(dato);
 		setRepos(dato);
 	};
 
 	let webDataI = async (valor) => {
-		console.log(valor.target.value);
 		const respI = await fetch(
 			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/${valor.target.value}`
 		);
 		const datoI = await respI.json();
-		console.log(datoI);
 		setReposI(datoI);
+  };
+  
+  let webDataII = async (valor) => {
+		console.log(valor.target.value, "el ultimo");
+		const respII = await fetch(
+			`https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor.target.value}`
+		);
+		const datoII = await respII.json();
+		console.log(datoII);
+		// setReposI(datoII);
 	};
 
-	console.log(reposI);
+
   let comp;
   let varr;
 
 	const categories = [ ...new Set(reposI.map((re) => re.name.split('.')[1])) ];
 	const categoriesI = [ ...new Set(reposI.map((re) => re.name)) ];
 
-	console.log(categories, 'categorias');
-	console.log(categoriesI, 'categoriasI');
+
 
   if (categories[0] === 'us' || categories[0] =='es') { varr = categories }
   else if (categories[0] === undefined) { varr = categoriesI }
 
-  console.group(varr)
+
 
 		
 
@@ -121,6 +127,8 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem>
+
+
                     { varr.length !== 0 ? 
 										<GridItem xs={12} sm={6} md={5} lg={5}>
 											<FormControl fullWidth className={classes.selectFormControl}>
@@ -128,7 +136,6 @@ export default function App() {
                         {(categories[0] === undefined)? 'Selecciones un archivo': 'Selecciones una localidad'}
 												</InputLabel>
 												<Select
-													multiple
 													value={multipleSelect}
 													onChange={handleMultiple}
 													MenuProps={{ className: classes.selectMenu }}
@@ -136,6 +143,10 @@ export default function App() {
 													inputProps={{
 														name: 'multipleSelect',
 														id: 'multiple-select'
+                          }}
+                          
+                          onClick={(e) => {
+														webDataII(e);
 													}}
 												>
 													<MenuItem
@@ -153,7 +164,8 @@ export default function App() {
 																	root: classes.selectMenuItem,
 																	selected: classes.selectMenuItemSelectedMultiple
 																}}
-																value={key}
+                                index={key}
+																value={localidad}
 															>
 																{localidad}
 															</MenuItem>
@@ -162,9 +174,6 @@ export default function App() {
 												</Select>
 											</FormControl>
 										</GridItem> : null}
-
-
-
 									</GridContainer>
 								</GridItem>
 							</GridContainer>
