@@ -14,28 +14,7 @@ let text =
 export default function Editor(props) {
     console.log(props, "valor que pasa")
 
-
-    let webData = async (props) => {
-        let path = props.value.path;
-        // let urlBase = `https://api.github.com/repos/4GeeksAcademy/contents/${path}`
-
-        let urlBase = props.value.download_url;
-        const resp = await fetch(urlBase).then(
-            (response) => { console.log(response)}
-        ); };
-        
-        // const resp = await fetch(urlBase).then((response) => {
-        //     if (response.ok) {
-        //       let data = response;
-        //       console.log(data)
-        //       if (response.headers.get('Content-Type').indexOf('application/json') > -1) {
-        //         data = response.json();
-        //         console.log(data);
-        //       }
-        //       return data;
-        //     }})
-
-    webData(props);
+ 
     
   return (
     <div >
