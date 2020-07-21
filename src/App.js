@@ -22,30 +22,22 @@ const useStyles = makeStyles(styles);
 export default function App() {
 	const [ simpleSelect, setSimpleSelect ] = React.useState('');
 	const [ repos, setRepos ] = React.useState([]);
-	const [ folders, setFolders ] = React.useState([]);
+  const [ reposFiltered, setReposFiltered ] = React.useState([]);
+
 
 
 
 	const handleSimple = (event) => {
 		setSimpleSelect(event.target.value);
 	};
-	// const handleSimpleI = (event) => {
-	// 	setSimpleSelectI(event.target.value);
-	// };
-	// const handleSimpleII = (event) => {
-	// 	setSimpleSelectII(event.target.value);
-	// };
-	// const handleSimpleIII = (event) => {
-	// 	setSimpleSelectIII(event.target.value);
-	// };
-	// const handleMultiple = (event) => {
-	// 	setMultipleSelect(event.target.value);
-	// };
+
 
 	const classes = useStyles();
 
   // Variables
-  let urlBase = 'https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data'
+  let urlBase = 'https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data';
+  let urlBaseI = 'https://api.github.com/repos/4GeeksAcademy/website-V2/contents/';
+
 
   // Variable
 
@@ -53,80 +45,92 @@ export default function App() {
 	useEffect(() => {
     webData();
   }, []);
-  
-  
 
-	let webData = async (e) => {
+
+
+  let webData = async (e) => {
+    let new_repository = [];
+    let new_repository_I = [];
+    let new_total_folder =[];
+    let new_total_folder_I =[];
+    let new_total_folder_flat = [];
+    let new_total_folder_flat_I = [];
+    let new_repository_flat =[];
+    let new_repository_flat_I =[];
+
 		const resp = await fetch(urlBase);
     const dato = await resp.json();
-    const folders = dato.filter((e) => e.name.split('.').length === 1);
-    const repos = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
-    setRepos(repos);
-    setFolders(folders);
-  }
+    const folders_I = dato.filter((e) => e.name.split('.').length === 1);
+    const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
+
+    for (let i= 0; i < folders_I.length; i++){
+      let resp =  await fetch(urlBaseI+folders_I[i].path);
+      let dato = await resp.json();
+      let new_folders = dato.filter((e) => e.name.split('.').length === 1);
+      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
+      if (new_folders.length > 0) {
+        new_total_folder.push(new_folders)
+      };
+
+      if (new_repo.length > 0) {
+        new_repository.push(new_repo)
+      };
+    };
+  
+    for (let a = 0; a < new_total_folder.length; a++) {
+      new_total_folder_flat = new_total_folder_flat.concat(new_total_folder[a])
+    };
+
+    for (let a = 0; a < new_repository.length; a++) {
+      new_repository_flat = new_repository_flat.concat(new_repository[a])
+    };  
+
+    for (let i= 0; i < new_total_folder_flat.length; i++){
+      let resp =  await fetch(urlBaseI+new_total_folder_flat[i].path);
+      let dato = await resp.json();
+      let new_folders = dato.filter((e) => e.name.split('.').length === 1);
+      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
 
 
-    const webDataI = (folders) => {
-    folders.map(async (folder) => {
-      console.log(folder, "deberia ser el folder")
-          const resp =  await fetch(urlBase+'/'+folder.name);
-          const dato = await resp.json();
-          console.log(dato, "para ver que es dato")
-          const folders = dato.filter((e) => e.name.split('.').length === 1);
-          console.log(folder, "dentro del segundo mao")
-          const repos = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
-    });
-    // return Promise.all(promises);
-  }
+      if (new_folders.length > 0) {
+        new_total_folder_I.push(new_folders);
+      };
+
+      if (new_repo.length > 0) {
+        new_repository_I.push(new_repo);
+      };
+    };
+
+    for (let d = 0; d < new_total_folder.length; d++) {
+      new_total_folder_flat_I = new_total_folder_flat_I.concat(new_total_folder_I[d])
+    };
+
+    for (let c = 0; c < new_repository_I.length; c++) {
+      new_repository_flat_I = new_repository_flat_I.concat(new_repository_I[c])
+    };
+
+    setRepos([repos_I, new_repository_flat, new_repository_flat_I]);
+
+};
+
+let total_repos = [];
+for (let c = 0; c < repos.length; c++) {
+  total_repos  = total_repos.concat(repos[c])
+};
+
+console.log(total_repos, "todos los repos")
+
+const nationalities = [ ...new Set(total_repos.map((re) => re.name.split('.')[1])) ];
+
+const filter_repos = (event) => {
+  let nation = event.target.value;
+  let repos_filtered = total_repos.filter((e) => e.name.split('.')[1] === nation);
+  setReposFiltered(repos_filtered)
+};
+
+console.log(reposFiltered, "los repos filtrados")
 
   
-  // folders.map((folder, key) => {
-	// 	const resp =   async await fetch(urlBase+folder.name);
-  //   const dato = await resp.json();
-  //   const folders = dato.filter((e) => e.name.split('.').length === 1);
-  //   console.log(folder, "dentro del segundo mao")
-  //   const repos = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
-  //   setRepos(repos);
-  //   setFolders(folders);
-  //   });
-
-  console.log(repos, "repos")
-  console.log(folders, "folders")
-
-	// let webDataI = async (valor) => {
-	// 	const urlBaseI = `https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/${valor.target
-	// 		.value}`;
-	// 	const respI = await fetch(urlBaseI);
-	// 	const datoI = await respI.json();
-	// 	setReposI(datoI);
-	// 	const categories = [ ...new Set(datoI.map((re) => re.name.split('.')[1])) ];
-	// 	const categoriesI = [ ...new Set(datoI.map((re) => re.name)) ];
-	// };
-
-	// let webDataII = async (valor) => {
-	// 	const urlBaseII = `https://api.github.com/repos/4GeeksAcademy/website-V2/contents/src/data/components/${valor
-	// 		.target.value}`;
-	// 	const respII = await fetch(urlBaseII);
-	// 	const datoII = await respII.json();
-
-	// 	// if (datoII.message) {
-	// 	// 	setReposII([ { name: 'alex.us.prueba' } ]);
-	// 	// } else if (datoII.filter((e) => e.name.split('.')[1] === 'us').length > 0) {
-	// 	// 	categoriesII = [ ...new Set(datoII.map((re) => re.name.split('.')[1])) ];
-	// 	// 	setReposII(categoriesII);
-	// 	// 	setReposIII(datoII);
-	// 	// } else {
-	// 	// 	setReposII([ { name: 'alex.us.prueba' } ]);
-	// 	// }
-	// };
-
-	// varr = [];
-	// if (categories[0] === 'us' || categories[0] === 'es') {
-	// 	varr = categories;
-	// } else if (categories[0] === undefined) {
-	// 	varr = categoriesI;
-	// }
-
 
 
 
@@ -160,12 +164,11 @@ export default function App() {
 													inputProps={{
 														name: 'simpleSelect',
 														id: 'simple-select'
-													}}
-													// onClick={(e) => {
-													// 	webDataI(e);
-													// }}
+                          }}
+                          onClick = {e => {filter_repos(e)}}
 												>
-													{repos.map((re, key) => {
+													{nationalities? nationalities.map((re, key) => {
+                            console.log(re, "re dentro del repo")
 														return (
 															<MenuItem
 																classes={{
@@ -173,20 +176,22 @@ export default function App() {
 																	selected: classes.selectMenuItemSelected
 																}}
 																index={key}
-																value={re.name}
+                                value={re}
+                               
 															>
-																{re.name}
+																{re}
 															</MenuItem>
 														);
-													})}
+													}):null}
 												</Select>
 											</FormControl>
 										</GridItem>
 										<div style={{ width: 300 }}>
-											<Autocomplete
+
+											{/* <Autocomplete
 												id="free-solo-demo"
 												freeSolo
-												options={top100Films.map((option) => option.title)}
+												options={reposFiltered.map((option) => option.name)}
 												renderInput={(params) => (
 													<TextField
 														{...params}
@@ -195,26 +200,27 @@ export default function App() {
                             variant="outlined"                  
 													/>
 												)}
-											/>
+											/> */}
 											<Autocomplete
 												freeSolo
 												id="free-solo-2-demo"
-												disableClearable
-												options={top100Films.map((option) => option.title)}
+                        disableClearable
+												options={reposFiltered.map((option) => option.name)}
 												renderInput={(params) => (
 													<TextField
-														{...params}
-														label="Search input"
+                            {...params}
+          
+														label="Busqueda del archivo"
 														margin="normal"
                             variant="outlined"
                             InputProps={{ ...params.InputProps, type: 'search' }}
-                            onClick= {webDataI(folders)}
 													/>
 												)}
 											/>
 										</div>
 									</GridContainer>
 								</GridItem>
+             
 							</GridContainer>
 						</CardBody>
 					</Card>

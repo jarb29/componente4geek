@@ -12,7 +12,7 @@ let text =
   ',\n   "descr": "add two numbers"\n}';
 
 export default function Editor(props) {
-    console.log(props, "valor que pasa")
+   
 
  
     
