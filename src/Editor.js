@@ -18,7 +18,6 @@ export default function Editor(props) {
     
   return (
     <div >
-      <h1>Code Editor</h1>
       <AceEditor
         mode="json"
         theme="github"
