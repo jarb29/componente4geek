@@ -62,7 +62,7 @@ export default function App() {
     const dato = await resp.json();
     const folders_I = dato.filter((e) => e.name.split('.').length === 1);
 	const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
-	new_repository.push(repos_I)
+	// new_repository.push(repos_I)
 
     for (let i= 0; i < folders_I.length; i++){
       let resp =  await fetch(urlBaseI+folders_I[i].path);
