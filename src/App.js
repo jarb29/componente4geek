@@ -58,10 +58,11 @@ export default function App() {
     let new_repository_flat =[];
     let new_repository_flat_I =[];
 
-		const resp = await fetch(urlBase);
+	const resp = await fetch(urlBase);
     const dato = await resp.json();
     const folders_I = dato.filter((e) => e.name.split('.').length === 1);
-    const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
+	const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
+	new_repository.push(repos_I)
 
     for (let i= 0; i < folders_I.length; i++){
       let resp =  await fetch(urlBaseI+folders_I[i].path);
