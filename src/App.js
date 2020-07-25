@@ -119,20 +119,15 @@ for (let c = 0; c < repos.length; c++) {
   total_repos  = total_repos.concat(repos[c])
 };
 
-console.log(total_repos, "todos los repos")
 
-const nationalities = [ ...new Set(total_repos.map((re) => re.name.split('.')[1] !== 'yml'? re.name.split('.')[1]:))];
+const nationalities = [ ...new Set(total_repos.map((re) => re.name.split('.')[1]))];
+const nationalitiesI = nationalities.filter((e) => e !== "yml");
 
 const filter_repos = (event) => {
   let nation = event.target.value;
   let repos_filtered = total_repos.filter((e) => e.name.split('.')[1] === nation);
   setReposFiltered(repos_filtered)
 };
-
-console.log(reposFiltered, "los repos filtrados")
-
-  
-
 
 
 	return (
@@ -168,8 +163,7 @@ console.log(reposFiltered, "los repos filtrados")
                           }}
                           onClick = {e => {filter_repos(e)}}
 												>
-													{nationalities? nationalities.map((re, key) => {
-                            console.log(re, "re dentro del repo")
+													{nationalitiesI? nationalitiesI.map((re, key) => {
 														return (
 															<MenuItem
 																classes={{
