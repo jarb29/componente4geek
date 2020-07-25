@@ -121,7 +121,7 @@ for (let c = 0; c < repos.length; c++) {
 
 console.log(total_repos, "todos los repos")
 
-const nationalities = [ ...new Set(total_repos.map((re) => re.name.split('.')[1] !== 'yml'? re.name.split('.')[1]:null))];
+const nationalities = [ ...new Set(total_repos.map((re) => re.name.split('.')[1] !== 'yml'? re.name.split('.')[1]:))];
 
 const filter_repos = (event) => {
   let nation = event.target.value;
