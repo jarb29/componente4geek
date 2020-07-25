@@ -61,13 +61,13 @@ export default function App() {
 		const resp = await fetch(urlBase);
     const dato = await resp.json();
     const folders_I = dato.filter((e) => e.name.split('.').length === 1);
-    const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
+    const repos_I = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
 
     for (let i= 0; i < folders_I.length; i++){
       let resp =  await fetch(urlBaseI+folders_I[i].path);
       let dato = await resp.json();
       let new_folders = dato.filter((e) => e.name.split('.').length === 1);
-      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
+      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
       if (new_folders.length > 0) {
         new_total_folder.push(new_folders)
       };
@@ -89,7 +89,7 @@ export default function App() {
       let resp =  await fetch(urlBaseI+new_total_folder_flat[i].path);
       let dato = await resp.json();
       let new_folders = dato.filter((e) => e.name.split('.').length === 1);
-      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yaml');
+      let new_repo = dato.filter((e) => e.name.split('.')[e.name.split('.').length-1] === 'yml');
 
 
       if (new_folders.length > 0) {
@@ -176,7 +176,7 @@ console.log(reposFiltered, "los repos filtrados")
 																	selected: classes.selectMenuItemSelected
 																}}
 																index={key}
-                                value={re}
+                                                                 value={re}
                                
 															>
 																{re}
